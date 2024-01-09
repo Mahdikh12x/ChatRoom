@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ChatRoomManagement.Application.Contracts\ChatRoomManagement.Application.Contracts.csproj" />
+    <ProjectReference Include="..\ChatRoomManagement.Domain\ChatRoomManagement.Domain.csproj" />
+  </ItemGroup>
+
+</Project>

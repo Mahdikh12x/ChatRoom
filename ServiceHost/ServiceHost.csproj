@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\01_framework\01_framework.csproj" />
+    <ProjectReference Include="..\ChatRoomManagement.Infrastructure.Configuration\ChatRoomManagement.Infrastructure.Configuration.csproj" />
+  </ItemGroup>
+
+</Project>
