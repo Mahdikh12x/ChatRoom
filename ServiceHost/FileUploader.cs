@@ -1,39 +1,37 @@
 ﻿
 
 using _01_framework.Application;
+using _01_framework.Infrastructure;
+
 
 namespace ServiceHost
 {
-    public class FileUploader : IFileUploader
+    public class FileUploder : IFileUploader
     {
-        private readonly IWebHostEnvironment _environment;
+        private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public FileUploader(IWebHostEnvironment environment)
+        public FileUploder(IWebHostEnvironment webHostEnvironment)
         {
-            _environment = environment;
+            _webHostEnvironment = webHostEnvironment;
         }
 
         public string Upload(IFormFile file, string path)
         {
-            if (file is null || file.Length == 0)
-                return "";
+            if (file == null) return "";
 
-            var directoryPath =$"{_environment.WebRootPath}\\ UploaderFile \\{ path}";
-            if (!Directory.Exists(directoryPath))
+            var directorypath = $"{_webHostEnvironment.WebRootPath}//UpdolerFile//{path}";
+            if (!Directory.Exists(directorypath))
             {
-                Directory.CreateDirectory(directoryPath);
+                Directory.CreateDirectory(directorypath);
             }
-            Directory.CreateDirectory(directoryPath);
+            var FileName = $"{DateTime.Now.ToFileName()}-{file.FileName}";
+            var filepath = $"{directorypath}//{FileName}";
 
-            string fileName = $"{DateTime.Now.ToFileTime()}--{file.FileName}";
-            string filePath = $"{directoryPath}\\ {fileName}";
-
-             using var output = File.Create(filePath);
+            using var output = File.Create(filepath);
             file.CopyTo(output);
 
-          
+            return $"{path}/{FileName}";
 
-            return $"{path}\\{fileName}";
         }
     }
 }

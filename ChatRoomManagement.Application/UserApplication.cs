@@ -1,11 +1,10 @@
 ﻿using _01_framework.Application;
 using ChatRoomManagement.Application.Contracts.User;
 using ChatRoomManagement.Domain.UserAgg;
-using WebApiTest;
 
 namespace ChatRoomManagement.Application
 {
-	public class UserApplication : IUserApplication
+    public class UserApplication : IUserApplication
 	{
 		private readonly IUserRepository _userRepository;
 		private readonly IAuthHelper _authHelper;

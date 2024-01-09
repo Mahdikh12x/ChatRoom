@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Authentication;
-using System.ComponentModel.DataAnnotations;
+
 using System.Security.Claims;
 
 namespace _01_framework.Application
@@ -50,7 +50,7 @@ namespace _01_framework.Application
 
             var claimsIdentity=new ClaimsIdentity(claims,CookieAuthenticationDefaults.AuthenticationScheme);
 
-            var authProperties = new AuthenticationProperties()
+            var authProperties = new Microsoft.AspNetCore.Authentication.AuthenticationProperties()
             {
                 ExpiresUtc=DateTimeOffset.UtcNow.AddDays(1)
             };

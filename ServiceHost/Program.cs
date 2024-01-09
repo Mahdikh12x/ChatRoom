@@ -16,7 +16,7 @@ builder.Services.AddSignalR();
 ChatRoomManagementBootStrapper.Configure(builder.Services,connectionString);
 builder.Services.AddTransient<IAuthHelper, AuthHelper>();
 builder.Services.AddTransient<ISecurity,Security>();
-builder.Services.AddTransient<IFileUploader,FileUploader>();
+builder.Services.AddTransient<IFileUploader, FileUploder>();
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, o =>
