@@ -15,20 +15,33 @@ namespace ChatRoomManagement.Application
             _fileUploader = fileUploader;
         }
 
-        public OperationResult CreateGroup(CreateGroup command)
+        public async Task<GroupViewModel> CreateGroup(CreateGroup command)
         {
             var operation = new OperationResult();
 
-            if (_groupRepository.IsExist(p => p.Token == command.Token))
-                return operation.Failed("Error");
+            if (!_groupRepository.IsExist(p => p.GroupTitle == command.GroupTitle))
+            {
+                string picture = _fileUploader.Upload(command.Picture, "Groups\\Pictures");
+                var group = new Group(command.GroupTitle, picture, command.OwnerId, command.Token);
+                _groupRepository.Create(group);
+                _groupRepository.SaveChanges();
 
-            string picture = _fileUploader.Upload(command.Picture, "Groups\\Pictures");
-            var group = new Group(command.GroupTitle, picture, command.OwnerId, command.Token);
-            _groupRepository.Create(group);
-            _groupRepository.SaveChanges();
+                var Group=new GroupViewModel
+                {
+                    Id=group.Id,
+                    GroupTitle=group.GroupTitle,
+                    Picture=group.Picture, 
+                    Token=group.Token.ToString(),
+                };
+
+               return Group;
+            }
 
 
-            return operation.IsSucssed();
+
+            return new GroupViewModel();
+
+           
         }
 
         public OperationResult EditGroup(EditGroup command)

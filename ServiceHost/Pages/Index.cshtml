@@ -184,20 +184,24 @@
                     </div>
                     <div class="discussions">
                         <div class="list-group" id="chats" role="tablist">
-                            <a href="#list-chat" class="filterDiscussions all unread single active" id="list-chat-list" data-toggle="list" role="tab">
-                                <img class="avatar-md" src="~/dist/img/avatars/avatar-female-1.jpg" data-toggle="tooltip" data-placement="top" title="Janette" alt="avatar">
-                                <div class="status">
-                                    <i class="material-icons online">fiber_manual_record</i>
-                                </div>
-                                <div class="new bg-yellow">
-                                    <span>+7</span>
-                                </div>
-                                <div class="data">
-                                    <h5>Janette Dalton</h5>
-                                    <span>Mon</span>
-                                    <p>A new feature has been updated to your account. Check it out...</p>
-                                </div>
-                            </a>
+                            
+                            @foreach(var item in Model.Groups)
+                            {
+                                <a href="#list-chat" class="filterDiscussions all unread single active" id="list-chat-list" data-toggle="list" role="tab">
+                                    <img class="avatar-md" src="~/UploderFiles/@item.Picture" data-toggle="tooltip" data-placement="top" title="Janette" alt="avatar">
+                                    <div class="status">
+                                        <i class="material-icons online">fiber_manual_record</i>
+                                    </div>
+                                    <div class="new bg-yellow">
+                                        <span>+7</span>
+                                    </div>
+                                    <div class="data">
+                                        <h5>@item.GroupTitle</h5>
+                                        <span>Mon</span>
+                                        <p>A new feature has been updated to your account. Check it out...</p>
+                                    </div>
+                                </a>
+                            }
 
                         </div>
                     </div>
@@ -702,34 +706,7 @@
 </div>
 <!-- End of Sidebar -->
 <!-- Start of Add Friends -->
-<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="requests">
-            <div class="title">
-                <h1>Add your friends</h1>
-                <button type="button" class="btn" data-dismiss="modal" aria-label="Close"><i class="material-icons">close</i></button>
-            </div>
-            <div class="content">
-                <form>
-                    <div class="form-group">
-                        <label for="user">Username:</label>
-                        <input type="text" class="form-control" id="user" placeholder="Add recipient..." required>
-                        <div class="user" id="contact">
-                            <img class="avatar-sm" src="~/dist/img/avatars/avatar-female-5.jpg" alt="avatar">
-                            <h5>Keith Morris</h5>
-                            <button class="btn"><i class="material-icons">close</i></button>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="welcome">Message:</label>
-                        <textarea class="text-control" id="welcome" placeholder="Send your welcome message...">Hi Keith, I'd like to add you as a contact.</textarea>
-                    </div>
-                    <button type="submit" class="btn button w-100">Send Friend Request</button>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
+
 <!-- End of Add Friends -->
 <!-- Start of Create Chat -->
 <div class="modal fade" id="startnewchat" tabindex="-1" role="dialog" aria-hidden="true">
@@ -738,7 +715,7 @@
             <div class="title">
 
                 <h1>Create new group</h1>
-                <button type="button" class="btn" data-dismiss="modal" aria-label="Close"><i class="material-icons">close</i></button>
+                <button type="button" id="close" class="btn" data-dismiss="modal" aria-label="Close"><i class="material-icons">close</i></button>
             </div>
             <div class="content">
                 <form enctype="multipart/form-data" onsubmit="insertGroup(event)">

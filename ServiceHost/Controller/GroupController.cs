@@ -39,14 +39,17 @@ namespace ServiceHost.Controller
                     
             
                 };
-                var result = _groupApplication.CreateGroup(createGroup);
-                await _chathub.Clients.User(userId.ToString()).SendAsync("NewGroup", createGroup.GroupTitle, createGroup.Picture, createGroup.Token);
+
+
+                var result =await _groupApplication.CreateGroup(createGroup);
+                
+                await _chathub.Clients.User(userId.ToString()).SendAsync("NewGroup", result.GroupTitle, result.Picture, result.Token);
 
 
             }
             catch
             {
-                await _chathub.Clients.User(userId.ToString()).SendAsync("NewGroup", "ERROR");
+                await _chathub.Clients.User(userId.ToString()).SendAsync("NewGroup", null);
             }
         }
     }

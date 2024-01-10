@@ -19,7 +19,7 @@ namespace ServiceHost
         {
             if (file == null) return "";
 
-            var directorypath = $"{_webHostEnvironment.WebRootPath}//UpdolerFile//{path}";
+            var directorypath = $"{_webHostEnvironment.WebRootPath}//UploderFiles//{path}";
             if (!Directory.Exists(directorypath))
             {
                 Directory.CreateDirectory(directorypath);

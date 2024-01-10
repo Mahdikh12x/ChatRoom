@@ -29,7 +29,7 @@ namespace ChatRoomManagement.Application.Contracts.Group
 
 	public interface IGroupApplication
 	{
-		OperationResult CreateGroup(CreateGroup command);
+		Task<GroupViewModel> CreateGroup(CreateGroup command);
 		OperationResult EditGroup(EditGroup command);
 		Task<List<GroupViewModel>> GetGroups();
 		Task<EditGroup> GetDetails(long groupId);
