@@ -24,7 +24,8 @@ namespace ChatRoomManagement.Application
 				return operation.Failed("The Account already is exist");
 
 			string password = _security.GetSHA256Hash(command.Password);
-			string defulatPicture = "https://www.kindpng.com/picc/m/24-248253_user-profile-default-image-png-clipart-png-download.png";
+			
+			string defulatPicture = "\\Users\\Default\\avatar.jpg";
 			var user = new User(command.UserName, command.Email, command.UserName, password, defulatPicture);
 
 			_userRepository.Create(user);

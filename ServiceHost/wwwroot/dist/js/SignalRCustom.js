@@ -11,14 +11,14 @@ connection.on("NewGroup", appendGroup);
 
 function appendGroup(groupTitle, picture, token) {
 
-  
+
     if (groupTitle == null) {
         alert("We could not add this group")
     }
     else {
 
         $("#chats").append(` <a href="#list-chat" class="filterDiscussions all unread single active" id="list-chat-list" data-toggle="list" role="tab">
-                                <img class="avatar-md" src="~/UploderFiles/${picture}" data-toggle="tooltip" data-placement="top" title="Janette" alt="avatar">
+                                <img class="avatar-md" src="/UploderFiles/${picture}" data-toggle="tooltip" data-placement="top" title="Janette" alt="avatar">
                                 <div class="status">
                                     <i class="material-icons online">fiber_manual_record</i>
                                 </div>
@@ -34,9 +34,9 @@ function appendGroup(groupTitle, picture, token) {
 
 
 
-  $("#close").click();
+        $("#close").click();
     }
-  
+
 
 }
 
@@ -64,4 +64,39 @@ function insertGroup(event) {
     })
 
 
+}
+
+
+function search() {
+
+    var value = $("#searchinput").val();
+
+    if (value) {
+        $("#chats").hide();
+        $("#searchbar").show();
+
+        $.ajax({
+            url: "/api/Group/Search?title=" + value,
+            type: "GET",
+
+        }).done(function (data) {
+
+         
+            $("#searchbar").html("");
+            for (var i in data) {
+                $("#searchbar").append(` <a href="#list-chat" class="filterDiscussions all unread single active" id="list-chat-list" data-toggle="list" role="tab">
+                                <img class="avatar-md" src="/UploderFiles/${data[i].picture}" data-toggle="tooltip" data-placement="top" title="Janette" alt="avatar">
+                                <div class="data">
+                                    <h5>${data[i].title}</h5>
+                                 
+                                </div>
+                            </a>`)
+            }
+
+
+        });
+    } else {
+        $("#chats").show();
+        $("#searchbar").hide();
+    }
 }

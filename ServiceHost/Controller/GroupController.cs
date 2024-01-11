@@ -52,5 +52,14 @@ namespace ServiceHost.Controller
                 await _chathub.Clients.User(userId.ToString()).SendAsync("NewGroup", null);
             }
         }
+
+
+        [HttpGet]
+        [Route("Search")]
+        public async Task<IActionResult> Search([FromQuery]string title)
+        {
+            var userId=_authHelper.GetUserId(User);
+            return new ObjectResult(await _groupApplication.Search(title,userId));
+        }
     }
 }

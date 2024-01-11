@@ -14,6 +14,7 @@ namespace ChatRoomManagement.Infrastructure.EfCore
 
         public DbSet<User> Users { get; set; }
         public DbSet<Group> Groups{ get; set; }
+       
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

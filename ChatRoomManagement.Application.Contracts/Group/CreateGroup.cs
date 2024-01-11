@@ -31,7 +31,17 @@ namespace ChatRoomManagement.Application.Contracts.Group
 	{
 		Task<GroupViewModel> CreateGroup(CreateGroup command);
 		OperationResult EditGroup(EditGroup command);
-		Task<List<GroupViewModel>> GetGroups();
+		Task<List<GroupViewModel>> GetGroupsBy(Guid userId);
 		Task<EditGroup> GetDetails(long groupId);
+		Task<List<SearchResultViewModel>> Search(string title,string uesrId);
 	}
+
+
+	public class SearchResultViewModel
+	{
+        public string Title { get; set; }
+        public string Token{ get; set; }
+        public string Picture { get; set; }
+        public bool IsUser { get; set; }
+    }
 }

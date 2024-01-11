@@ -16,14 +16,17 @@ namespace ChatRoomManagement.Domain.GroupAgg
 
         public List<User> Users { get;private set; }
 
-		public Group(string groupTitle, string picture,Guid ownerId,Guid token)
+
+		protected Group(){}
+
+		public Group(string groupTitle, string picture,Guid ownerId,Guid token,User user)
 		{
 			GroupTitle = groupTitle;
 			Picture = picture;
 			OwnerId=ownerId;
 			IsPrivate=false;
 			Token=token;
-			Users=new List<User>();
+			Users=new List<User>(){user};
 		}
 
 		public void Edit(string groupTitle, string picture)
