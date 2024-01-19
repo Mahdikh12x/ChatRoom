@@ -7,8 +7,12 @@ namespace ChatRoomManagement.Domain.GroupAgg
     {
         Task<List<GroupViewModel>> GetGroups();
         Task<EditGroup> GetDetails(long groupId);
-        Task<List<SearchResultViewModel>> Search(string title, string uesrId);
-        Task<List<GroupViewModel>>GetGroupsBy(Guid userId);
+        Task<List<SearchResultViewModel>> Search(string title, long uesrId);
+        Task<List<GroupViewModel>> GetGroupsBy(long userId);
+        Task<bool> IsUserInGroup(long userId, Guid token);
+        Task JoinGroup(long userId, Guid groupToken);
+        Task<GroupViewModel> GetGroupBy(long userId);
+
 
     }
 

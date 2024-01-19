@@ -7,7 +7,7 @@ namespace ChatRoomManagement.Application.Contracts.Group
 	{
 		public string GroupTitle { get; set; }
 		public IFormFile Picture { get; set; }
-		public Guid OwnerId { get; set; }
+		public long OwnerId { get; set; }
         public Guid Token { get; set; }	
     }
 
@@ -30,15 +30,18 @@ namespace ChatRoomManagement.Application.Contracts.Group
 	public interface IGroupApplication
 	{
 		Task<GroupViewModel> CreateGroup(CreateGroup command);
-		OperationResult EditGroup(EditGroup command);
-		Task<List<GroupViewModel>> GetGroupsBy(Guid userId);
+		Task<List<GroupViewModel>> GetGroupsBy(long userId);
+		Task<GroupViewModel> GetGroupBy(long userId);
 		Task<EditGroup> GetDetails(long groupId);
-		Task<List<SearchResultViewModel>> Search(string title,string uesrId);
+		Task<List<SearchResultViewModel>> Search(string title,long uesrId);
+		Task<bool> IsUserInGroup(long userId,Guid token);
+		Task JoinGroup(long userId,Guid groupToken);
 	}
 
 
 	public class SearchResultViewModel
 	{
+        public long Id{ get; set; }
         public string Title { get; set; }
         public string Token{ get; set; }
         public string Picture { get; set; }

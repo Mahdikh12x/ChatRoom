@@ -4,7 +4,7 @@ using ChatRoomManagement.Domain.UserAgg;
 
 namespace ChatRoomManagement.Infrastructure.EfCore.Repository
 {
-    public class UserRepository : RepositoryBase<Guid, User>, IUserRepository
+    public class UserRepository : RepositoryBase<long, User>, IUserRepository
     {
         private readonly ChatRoomContext _context;
         public UserRepository(ChatRoomContext context) : base(context)

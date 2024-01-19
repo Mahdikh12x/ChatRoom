@@ -1,5 +1,6 @@
 ﻿
 using _01_framework.Domain;
+using ChatRoomManagement.Domain.ChatAgg;
 using ChatRoomManagement.Domain.UserAgg;
 
 namespace ChatRoomManagement.Domain.GroupAgg
@@ -8,18 +9,18 @@ namespace ChatRoomManagement.Domain.GroupAgg
 	{
         public string GroupTitle { get;private set; }
         public string Picture { get;private set; }
-        public Guid OwnerId { get;private set; }
+        public long OwnerId { get;private set; }
         public Guid Token { get; private set; }
         public bool IsPrivate { get;private set; }
 
 
-
+        public List<Chat> Chats{ get; private set; }
         public List<User> Users { get;private set; }
 
 
 		protected Group(){}
 
-		public Group(string groupTitle, string picture,Guid ownerId,Guid token,User user)
+		public Group(string groupTitle, string picture,long ownerId,Guid token,User user)
 		{
 			GroupTitle = groupTitle;
 			Picture = picture;
@@ -35,6 +36,8 @@ namespace ChatRoomManagement.Domain.GroupAgg
 			Picture = picture;
 		}
 
+
+		
 
 	}
 }

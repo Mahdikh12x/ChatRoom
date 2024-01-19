@@ -2,7 +2,7 @@
 
 namespace ChatRoomManagement.Domain.UserAgg
 {
-    public interface IUserRepository:IRepository<Guid,User>
+    public interface IUserRepository:IRepository<long,User>
     {
         User GetByEmail(string email);
     }

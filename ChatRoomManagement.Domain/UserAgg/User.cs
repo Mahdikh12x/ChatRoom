@@ -1,9 +1,10 @@
 ﻿using _01_framework.Domain;
+using ChatRoomManagement.Domain.ChatAgg;
 using ChatRoomManagement.Domain.GroupAgg;
 
 namespace ChatRoomManagement.Domain.UserAgg
 {
-    public class User:BaseEntity<Guid>
+    public class User:BaseEntity<long>
     {
         public string Name { get; private set; }
         public string Email { get;private set; }
@@ -14,6 +15,7 @@ namespace ChatRoomManagement.Domain.UserAgg
         public string Picture { get;private set; }
 
 
+        public List<Chat> Chats { get; private set; }
         public List<Group> Groups { get;private set; }
 
         public User(string name, string email, string userName, string password, string picture)
@@ -39,5 +41,7 @@ namespace ChatRoomManagement.Domain.UserAgg
         {
             Password=password;
         }
+
+        
     }
 }

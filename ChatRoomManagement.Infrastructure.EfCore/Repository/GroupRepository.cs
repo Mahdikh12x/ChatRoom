@@ -30,6 +30,21 @@ namespace ChatRoomManagement.Infrastructure.EfCore.Repository
 
         }
 
+        public async Task<GroupViewModel> GetGroupBy(long userId)
+        {
+            var query = _context.Groups.Select(p => new GroupViewModel
+            {
+                Id = p.Id,
+                GroupTitle = p.GroupTitle,
+                Picture = p.Picture,
+                Token = p.Token.ToString(),
+                CreationDate = p.CreationDate,
+
+            }).FirstOrDefaultAsync(p => p.Id == userId);
+
+            return await query;
+        }
+
         public async Task<List<GroupViewModel>> GetGroups()
         {
             var query = _context.Groups.Select(p => new GroupViewModel
@@ -45,7 +60,7 @@ namespace ChatRoomManagement.Infrastructure.EfCore.Repository
             return await query.OrderByDescending(p => p.CreationDate).ToListAsync();
         }
 
-        public async Task<List<GroupViewModel>> GetGroupsBy(Guid userId)
+        public async Task<List<GroupViewModel>> GetGroupsBy(long userId)
         {
 
             var query = _context.Users.Include(p => p.Groups)
@@ -64,23 +79,45 @@ namespace ChatRoomManagement.Infrastructure.EfCore.Repository
                     CreationDate = item.CreationDate,
                 });
 
-               
+
             }
-             return result;
-            
+            return result;
+
 
 
         }
 
-        public async Task<List<SearchResultViewModel>> Search(string title, string uesrId)
+        public async Task<bool> IsUserInGroup(long userId, Guid token)
+        {
+            var user = _context.Users.Include(p => p.Groups).FirstOrDefault(p => p.Id == userId);
+
+            return user.Groups.Any(p => p.Token == token);
+        }
+
+        public async Task JoinGroup(long userId, Guid groupToken)
+        {
+            if (groupToken != null || userId != null)
+            {
+                var user = _context.Users.Include(p => p.Groups).FirstOrDefault(p => p.Id == userId);
+                var group = _context.Groups.FirstOrDefault(p => p.Token == groupToken);
+                user.Groups.Add(group);
+                _context.SaveChanges(); 
+                await Task.CompletedTask;
+            }
+
+
+        }
+
+        public async Task<List<SearchResultViewModel>> Search(string title, long  uesrId)
         {
             var result = new List<SearchResultViewModel>();
             if (string.IsNullOrWhiteSpace(title))
                 return result;
 
-            var groups = _context.Groups.Where(p => p.GroupTitle.Contains(title) && !p.IsPrivate && p.OwnerId.ToString()!=uesrId)
+            var groups = _context.Groups.Where(p => p.GroupTitle.Contains(title) && !p.IsPrivate && p.OwnerId!= uesrId)
                 .Select(p => new SearchResultViewModel
                 {
+                    Id = p.Id,
                     Title = p.GroupTitle,
                     IsUser = false,
                     Token = p.Token.ToString(),
@@ -88,9 +125,10 @@ namespace ChatRoomManagement.Infrastructure.EfCore.Repository
 
                 }).ToList();
 
-            var users = _context.Users.Where(p => p.UserName.Contains(title) && Guid.Parse(uesrId) != p.Id)
+           var users = _context.Users.Where(p => p.UserName.Contains(title) && uesrId != p.Id)
                 .Select(p => new SearchResultViewModel
                 {
+                    Id=p.Id,
                     Title = p.UserName,
                     IsUser = true,
                     Token = p.Id.ToString(),

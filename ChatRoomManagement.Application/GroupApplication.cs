@@ -49,35 +49,34 @@ namespace ChatRoomManagement.Application
            
         }
 
-        public OperationResult EditGroup(EditGroup command)
-        {
-            var operation = new OperationResult();
-
-            var group = _groupRepository.GetBy(command.Id);
-            if (group is null)
-                return operation.Failed("Error");
-
-            if (_groupRepository.IsExist(p => p.Token == command.Token))
-                return operation.Failed("Error");
-
-            string picture = _fileUploader.Upload(command.Picture, "/Groups/Pictures/");
-            group.Edit(command.GroupTitle, picture);
-            _groupRepository.SaveChanges();
-
-            return operation.IsSucssed();
-        }
+       
 
         public Task<EditGroup> GetDetails(long groupId)
         {
             return _groupRepository.GetDetails(groupId);
         }
 
-        public Task<List<GroupViewModel>>GetGroupsBy(Guid userId)
+        public async Task<GroupViewModel> GetGroupBy(long userId)
+        {
+            return await _groupRepository.GetGroupBy(userId);   
+        }
+
+        public Task<List<GroupViewModel>>GetGroupsBy(long userId)
         {
             return _groupRepository.GetGroupsBy(userId);
         }
 
-        public async Task<List<SearchResultViewModel>> Search(string title, string uesrId)
+        public async Task<bool> IsUserInGroup(long userId, Guid token)
+        {
+            return await _groupRepository.IsUserInGroup(userId, token);
+        }
+
+        public async Task JoinGroup(long userId, Guid groupToken)
+        {
+            await _groupRepository.JoinGroup(userId, groupToken);
+        }
+
+        public async Task<List<SearchResultViewModel>> Search(string title, long uesrId)
         {
             return await _groupRepository.Search(title, uesrId);
         }

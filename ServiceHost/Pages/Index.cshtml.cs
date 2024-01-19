@@ -23,7 +23,7 @@ namespace ServiceHost.Pages
         public async Task OnGet()
         {
             var userId=_authHelper.GetUserId(User);
-            Groups=await _groupApplication.GetGroupsBy(Guid.Parse(userId));
+            Groups=await _groupApplication.GetGroupsBy(long.Parse(userId));
         }
     }
 }

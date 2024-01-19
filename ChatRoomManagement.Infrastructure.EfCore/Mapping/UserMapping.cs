@@ -21,6 +21,8 @@ namespace ChatRoomManagement.Infrastructure.EfCore.Mapping
 
 
             builder.HasMany(p=>p.Groups).WithMany(p=>p.Users);
+			builder.HasMany(p=>p.Chats).WithOne(p=>p.User).HasForeignKey(p=>p.UserId);
+
         }
     }
 }

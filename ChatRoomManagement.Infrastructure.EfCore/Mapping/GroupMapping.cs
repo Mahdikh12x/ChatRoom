@@ -15,6 +15,7 @@ namespace ChatRoomManagement.Infrastructure.EfCore.Mapping
 			builder.Property(p=>p.Picture).HasMaxLength(500);
 
 			builder.HasMany(p=>p.Users).WithMany(p=>p.Groups);
+			builder.HasMany(p=>p.Chats).WithOne(p=>p.Group).HasForeignKey(p=>p.GroupId);
 		}
 	}
 }

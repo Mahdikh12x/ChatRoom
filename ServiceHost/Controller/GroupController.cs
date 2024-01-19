@@ -26,7 +26,7 @@ namespace ServiceHost.Controller
         [Route("CreateGroup")]
         public async Task CreateGroup([FromForm] string groupName,IFormFile imageFile)
         {
-            var userId = _authHelper.GetUserId(User);
+            var userId =long.Parse( _authHelper.GetUserId(User));
 
             try
             {
@@ -34,7 +34,7 @@ namespace ServiceHost.Controller
                 {
                     GroupTitle=groupName,
                     Picture=imageFile,
-                    OwnerId = Guid.Parse(userId),
+                    OwnerId = userId,
                     Token = Guid.NewGuid(),
                     
             
@@ -43,7 +43,7 @@ namespace ServiceHost.Controller
 
                 var result =await _groupApplication.CreateGroup(createGroup);
                 
-                await _chathub.Clients.User(userId.ToString()).SendAsync("NewGroup", result.GroupTitle, result.Picture, result.Token);
+                await _chathub.Clients.User(userId.ToString()).SendAsync("NewGroup", result.GroupTitle, result.Picture, result.Id);
 
 
             }
@@ -58,7 +58,7 @@ namespace ServiceHost.Controller
         [Route("Search")]
         public async Task<IActionResult> Search([FromQuery]string title)
         {
-            var userId=_authHelper.GetUserId(User);
+            var userId=long.Parse(_authHelper.GetUserId(User));
             return new ObjectResult(await _groupApplication.Search(title,userId));
         }
     }

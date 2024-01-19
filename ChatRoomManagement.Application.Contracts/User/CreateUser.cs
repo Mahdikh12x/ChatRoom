@@ -26,7 +26,7 @@ namespace ChatRoomManagement.Application.Contracts.User
 
     public class EditAccount:CreateAccount
     {
-        public int Id { get; set; }
+        public long Id { get; set; }
     }
 
     public interface IUserApplication
