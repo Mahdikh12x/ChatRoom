@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using ServiceHost.Hubs;
+using ChatRoomManagement.Application.Contracts.Chat;
 
 namespace ServiceHost.Controller
 {
@@ -15,34 +16,36 @@ namespace ServiceHost.Controller
         private readonly IHubContext<ChatHub> _chathub;
         private readonly IGroupApplication _groupApplication;
         private readonly IAuthHelper _authHelper;
-        public GroupController(IHubContext<ChatHub> chathub, IGroupApplication groupApplication, IAuthHelper authHelper)
+        private readonly IChatApplication _chatApplication;
+        public GroupController(IHubContext<ChatHub> chathub, IGroupApplication groupApplication, IAuthHelper authHelper, IChatApplication chatApplication)
         {
             _chathub = chathub;
             _groupApplication = groupApplication;
             _authHelper = authHelper;
+            _chatApplication = chatApplication;
         }
 
         [HttpPost]
         [Route("CreateGroup")]
-        public async Task CreateGroup([FromForm] string groupName,IFormFile imageFile)
+        public async Task CreateGroup([FromForm] string groupName, IFormFile imageFile)
         {
-            var userId =long.Parse( _authHelper.GetUserId(User));
+            var userId = long.Parse(_authHelper.GetUserId(User));
 
             try
             {
-                var createGroup=new CreateGroup() 
+                var createGroup = new CreateGroup()
                 {
-                    GroupTitle=groupName,
-                    Picture=imageFile,
+                    GroupTitle = groupName,
+                    Picture = imageFile,
                     OwnerId = userId,
                     Token = Guid.NewGuid(),
-                    
-            
+
+
                 };
 
 
-                var result =await _groupApplication.CreateGroup(createGroup);
-                
+                var result = await _groupApplication.CreateGroup(createGroup);
+
                 await _chathub.Clients.User(userId.ToString()).SendAsync("NewGroup", result.GroupTitle, result.Picture, result.Id);
 
 
@@ -56,10 +59,33 @@ namespace ServiceHost.Controller
 
         [HttpGet]
         [Route("Search")]
-        public async Task<IActionResult> Search([FromQuery]string title)
+        public async Task<IActionResult> Search([FromQuery] string title)
         {
-            var userId=long.Parse(_authHelper.GetUserId(User));
-            return new ObjectResult(await _groupApplication.Search(title,userId));
+            var userId = long.Parse(_authHelper.GetUserId(User));
+            return new ObjectResult(await _groupApplication.Search(title, userId));
+        }
+
+
+        [HttpPost]
+        [Route("SendMessage")]
+
+        public async Task SendMessage([FromForm] string body,[FromForm] long currentGroupId)
+        {
+            if (!string.IsNullOrWhiteSpace(body))
+            {
+                var userId = long.Parse(_authHelper.GetUserId(User));
+                var command = new CreateChat
+                {
+                    GroupId = currentGroupId,
+                    Body = body,
+                    UserId = userId
+
+                };
+
+               var result= await _chatApplication.CreateChat(command);
+               await _chathub.Clients.Group(result.GroupId.ToString()).SendAsync("RecieveMessage",result);
+            }
+
         }
     }
 }

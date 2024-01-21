@@ -14,21 +14,15 @@ namespace ChatRoomManagement.Application
             _chatRepository = chatRepository;
         }
 
-        public async Task CreateChat(CreateChat command)
+        public async Task<ChatViewModel> CreateChat(CreateChat command)
         {
-            if(command  != null)
-            {
-                var chat=new Chat(command.Body,command.UserId,command.GroupId);
-                _chatRepository.Create(chat);
-                _chatRepository.SaveChanges();
-                await Task.CompletedTask;
-            }
+            return await _chatRepository.CreateChat(command); 
                 
         }
 
-        public Task<List<ChatViewModel>> GetChats(long groupId)
+        public async Task<List<ChatViewModel>> GetChats(long groupId, long userId)
         {
-            return _chatRepository.GetChats(groupId);
+            return await _chatRepository.GetChats(groupId,userId);
         }
     }
 }

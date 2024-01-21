@@ -15,6 +15,7 @@ namespace ChatRoomManagement.Application.Contracts.Chat
         public long Id { get; set; }
         public string Body { get; set; }
         public  string AvatarSender { get; set; }
+        public  string UserNameSender { get; set; }
         public Guid GroupToken { get; set; }
         public long UserId { get; set; }
         public long GroupId { get; set; }
@@ -23,7 +24,7 @@ namespace ChatRoomManagement.Application.Contracts.Chat
 
     public interface IChatApplication
     {
-        Task CreateChat(CreateChat command);
-        Task<List<ChatViewModel>> GetChats(long groupId);
+        Task<ChatViewModel> CreateChat(CreateChat command);
+        Task<List<ChatViewModel>> GetChats(long groupId,long userId);
     }
 }
