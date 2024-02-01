@@ -13,7 +13,7 @@ namespace ServiceHost.Pages
     {
         private readonly IGroupApplication _groupApplication;
         private readonly IAuthHelper _authHelper;
-        public List<GroupViewModel> Groups { get; set; }
+        public GroupViewModel Groups { get; set; }
         public IndexModel(IGroupApplication groupApplication, IAuthHelper authHelper)
         {
             _groupApplication = groupApplication;

@@ -1,32 +1,54 @@
 ﻿
-
-
 var connection = new signalR.HubConnectionBuilder().withUrl("/chatHub").build();
+
+$(document).ready(function () {
+    if (Notification.permission !== "granted") {
+        Notification.requestPermission();
+    }
+});
+
 var currentGroupId = 0;
 var userId = 0;
 
-connection.on("SendClientMessage", function () {
-    console.log("succses");
-})
 
 
 connection.on("SetUserId", function (id) {
 
     userId = id;
-    console.log(userId);
 })
 connection.on("NewGroup", appendGroup);
+connection.on("ReciveNotification", reciveNotif)
 connection.on("RecieveMessage", reciveMessage)
 connection.on("JoinGroup", joined);
 
 
 function reciveMessage(result) {
 
-
+    debugger;
     if (userId == result.userId) {
 
-        
-        $("#chatbody").append(`<div class="message me">
+        if (result.fileAttach != "No File") {
+            $("#chatbody").append(`<div class="message me">
+                                <div class="text-main">
+                                    <div class="text-group me">
+                                        <div class="text me">
+                                             <div class="attachment">
+                                             <a href="/UploderFiles/${result.fileAttach}" download> 
+                                             <button class="btn attach"><i class="material-icons md-18">insert_drive_file</i></button>
+                                             </a>
+                                  
+                               <div class="file">
+                               <h5><a href="/UploderFiles/${result.fileAttach}" download>Show File</a></h5>
+                                 </div>
+                                  </div>
+
+                                        </div>
+                                    </div>
+                                    <span>${result.creationDate}</span>
+                                </div>
+                            </div>`)
+        } else {
+            $("#chatbody").append(`<div class="message me">
                                 <div class="text-main">
                                     <div class="text-group me">
                                         <div class="text me">
@@ -37,12 +59,35 @@ function reciveMessage(result) {
                                 </div>
                             </div>`)
 
+        }
+
 
     }
     else {
-
-        $("#chatbody").append(
-            `<div class="message">
+        if (result.fileAttach != "No File") {
+            $("#chatbody").append(
+                `<div class="message">
+                                <img class="avatar-md" src="/UploderFiles/${result.avatarSender}" data-toggle="tooltip" data-placement="top" >
+                                <div class="text-main">
+                                    <div class="text-group">
+                                    <h6 style="color:#99377b;">${result.userNameSender}</h6>
+                                        <div class="text">
+                                     <div class="attachment">
+                                    <a href="/UploderFiles/${result.fileAttach}" download> 
+                                             <button class="btn attach"><i class="material-icons md-18">insert_drive_file</i></button>
+                                             </a>
+                               <div class="file">
+                               <h5><a href="/UploderFiles/${result.fileAttach}" download>Show File</a></h5>
+                                 </div>
+                                  </div>
+                                        </div>
+                                    </div>
+                                    <span>${result.creationDate}</span>
+                                </div>
+                            </div>`)
+        } else {
+            $("#chatbody").append(
+                `<div class="message">
                                 <img class="avatar-md" src="/UploderFiles/${result.avatarSender}" data-toggle="tooltip" data-placement="top" >
                                 <div class="text-main">
                                     <div class="text-group">
@@ -54,17 +99,41 @@ function reciveMessage(result) {
                                     <span>${result.creationDate}</span>
                                 </div>
                             </div>`)
+        }
+
     }
-        
+
 
 }
+function reciveNotif(result) {
+    if (Notification.permission === "granted") {
+        if (currentGroupId !== result.groupId) {
+            var notification = new Notification(result.groupName,
+                {
+                    result: result.body
+                });
 
+        }
+    }
+}
 function joined(group, chats) {
 
     $("#startchat").css("display", "none");
     $("#chat").css("display", "block");
-    $(".inside img").attr("src", `/UploderFiles/${group.picture}`)
-    $("#chatname").html(group.groupTitle)
+    if (group.reciverId > 0) {
+        if (group.ownerId == userId) {
+            $(".inside img").attr("src", `/UploderFiles/${group.reciverPicture}`)
+            $("#chatname").html(group.reciverUserName)
+        } else {
+            $(".inside img").attr("src", `/UploderFiles/${group.ownerPicture}`)
+            $("#chatname").html(group.ownerUserName)
+        }
+
+    } else {
+        $(".inside img").attr("src", `/UploderFiles/${group.picture}`)
+        $("#chatname").html(group.groupTitle)
+    }
+
     currentGroupId = group.id;
 
     $("#chatbody").html('');
@@ -72,7 +141,27 @@ function joined(group, chats) {
 
         if (chats[i].userId == userId) {
 
-            $("#chatbody").append(`<div class="message me">
+            if (chats[i].fileAttach != "No File") {
+                $("#chatbody").append(`<div class="message me">
+                                <div class="text-main">
+                                    <div class="text-group me">
+                                        <div class="text me">
+                                             <div class="attachment">
+                                             <a href="/UploderFiles/${chats[i].fileAttach}" download> 
+                                             <button class="btn attach"><i class="material-icons md-18">insert_drive_file</i></button>
+                                             </a>
+                                  
+                               <div class="file">
+                               <h5><a href="/UploderFiles/${chats[i].fileAttach}" download>Show File</a></h5>
+                                 </div>
+                                  </div>
+                                        </div>
+                                    </div>
+                                    <span>${chats[i].creationDate}</span>
+                                </div>
+                                </div>`)
+            } else {
+                $("#chatbody").append(`<div class="message me">
                                 <div class="text-main">
                                     <div class="text-group me">
                                         <div class="text me">
@@ -81,14 +170,38 @@ function joined(group, chats) {
                                     </div>
                                     <span>${chats[i].creationDate}</span>
                                 </div>
-                            </div>`)
+                                </div>`)
+            }
+
 
 
         }
         else {
 
-            $("#chatbody").append(
-                `<div class="message">
+            if (chats[i].fileAttach != "No File") {
+                $("#chatbody").append(
+                    `<div class="message">
+                                <img class="avatar-md" src="/UploderFiles/${chats[i].avatarSender}" data-toggle="tooltip" data-placement="top" >
+                                <div class="text-main">
+                                    <div class="text-group">
+                                    <h6 style="color:#99377b;">${chats[i].userNameSender}</h6>
+                                        <div class="text">
+                                           <div class="attachment">
+                                    <a href="/UploderFiles/${chats[i].fileAttach}" download> 
+                                             <button class="btn attach"><i class="material-icons md-18">insert_drive_file</i></button>
+                                             </a>
+                               <div class="file">
+                               <h5><a href="/UploderFiles/${chats[i].fileAttach}" download>Show File</a></h5>
+                                 </div>
+                                  </div>
+                                        </div>
+                                    </div>
+                                    <span>${chats[i].creationDate}</span>
+                                </div>
+                            </div>`)
+            } else {
+                $("#chatbody").append(
+                    `<div class="message">
                                 <img class="avatar-md" src="/UploderFiles/${chats[i].avatarSender}" data-toggle="tooltip" data-placement="top" >
                                 <div class="text-main">
                                     <div class="text-group">
@@ -100,12 +213,15 @@ function joined(group, chats) {
                                     <span>${chats[i].creationDate}</span>
                                 </div>
                             </div>`)
+            }
+
         }
     }
 
 
 }
-function appendGroup(groupTitle, picture, id) {
+function appendGroup(groupTitle, picture, id, isPrivate) {
+
 
 
     if (groupTitle == null) {
@@ -114,14 +230,12 @@ function appendGroup(groupTitle, picture, id) {
     else {
         $("#chats").show();
         $("#searchbar").hide();
-        $("#chats").append(` <a  class="filterDiscussions all unread single " id="list-chat-list" data-toggle="list"  onclick="JoinInGroup('${id}')" role="tab">
+        $("#searchinput").val('');
+        if (isPrivate) {
+
+            $("#chats").append(` <a  class="filterDiscussions all unread single " id="list-chat-list" data-toggle="list"  onclick="JoinInPrivateGroup('${id}')" role="tab">
                                 <img class="avatar-md" src="/UploderFiles/${picture}" data-toggle="tooltip" data-placement="top" title="Janette" alt="avatar">
-                                <div class="status">
-                                    <i class="material-icons online">fiber_manual_record</i>
-                                </div>
-                                <div class="new bg-yellow">
-                                    <span>+7</span>
-                                </div>
+
                                 <div class="data">
                                     <h5>${groupTitle}</h5>
                                     <span>Mon</span>
@@ -131,6 +245,17 @@ function appendGroup(groupTitle, picture, id) {
 
 
 
+        } else {
+            $("#chats").append(` <a  class="filterDiscussions all unread single " id="list-chat-list" data-toggle="list"  onclick="JoinInGroup('${id}')" role="tab">
+                                <img class="avatar-md" src="/UploderFiles/${picture}" data-toggle="tooltip" data-placement="top" title="Janette" alt="avatar">
+
+                                <div class="data">
+                                    <h5>${groupTitle}</h5>
+                                    <span>Mon</span>
+                                    <p>A new feature has been updated to your account. Check it out...</p>
+                                </div>
+                            </a>`)
+        }
         $("#close").click();
     }
 
@@ -141,6 +266,11 @@ function JoinInGroup(groupId) {
 
     connection.invoke("JoinPublicGroup", groupId, currentGroupId);
 }
+function JoinInPrivateGroup(reciverId) {
+
+    connection.invoke("JoinPrivateGroup", reciverId, currentGroupId);
+
+}
 
 connection.start();
 
@@ -148,14 +278,17 @@ connection.start();
 function sendmessage(event) {
     event.preventDefault();
 
-    var textmessage = $("#textmessage").val();
-
-
+    var textmessage = event.target[0].value;
+    var fileattach = event.target[3].files[0]
+    if (textmessage == "" && fileattach != null) {
+        textmessage = "send File";
+    }
 
 
     var data = new FormData();
     data.append("body", textmessage);
     data.append("currentGroupId", currentGroupId);
+    data.append("file", fileattach);
 
 
 
@@ -168,7 +301,8 @@ function sendmessage(event) {
         contentType: false
     });
 
-    var textmessage = $("#textmessage").val('');
+    $("#fileattach").val('');
+    $("#textmessage").val('');
 
 
 }
@@ -215,7 +349,7 @@ function search() {
 
 
                 if (data[i].isUser) {
-                    $("#searchbar").append(` <a  class="filterDiscussions all unread single  onclick="JoinInGroup('${data[i].id}')" id="list-chat-list" data-toggle="list" role="tab" >
+                    $("#searchbar").append(` <a  class="filterDiscussions all unread single"  onclick="JoinInPrivateGroup('${data[i].id}')" id="list-chat-list" data-toggle="list" role="tab" >
                                 <img class="avatar-md" src="/UploderFiles/${data[i].picture}" data-toggle="tooltip" data-placement="top">
                                 <div class="data">
                                     <h5>${data[i].title}</h5>

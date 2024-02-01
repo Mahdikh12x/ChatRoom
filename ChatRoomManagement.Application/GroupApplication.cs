@@ -19,7 +19,7 @@ namespace ChatRoomManagement.Application
             _userRepository = userRepository;
         }
 
-        public async Task<GroupViewModel> CreateGroup(CreateGroup command)
+        public async Task<PublicGroupViewModel> CreateGroup(CreateGroup command)
         {
             var operation = new OperationResult();
 
@@ -27,11 +27,11 @@ namespace ChatRoomManagement.Application
             {
                 string picture = _fileUploader.Upload(command.Picture, "Groups\\Pictures");
                 var user=_userRepository.GetBy(command.OwnerId);
-                var group = new Group(command.GroupTitle, picture, command.OwnerId, command.Token,user);
+                var group = new Group(command.GroupTitle, picture, command.OwnerId, command.Token,false,0,user);
                 _groupRepository.Create(group);
                 _groupRepository.SaveChanges();
 
-                var Group=new GroupViewModel
+                var Group=new PublicGroupViewModel
                 {
                     Id=group.Id,
                     GroupTitle=group.GroupTitle,
@@ -44,26 +44,39 @@ namespace ChatRoomManagement.Application
 
 
 
-            return new GroupViewModel();
+            return new PublicGroupViewModel();
 
            
         }
 
-       
+        public async Task<PrivateGroupViewModel> CreatePrivateGruop(long ownerId, long reciverId)
+        {
+            if(ownerId==0 || reciverId==0)
+                return new PrivateGroupViewModel();
+
+           var result=await _groupRepository.CreatePrivateGruop(ownerId,reciverId);
+
+            return result;
+        }
 
         public Task<EditGroup> GetDetails(long groupId)
         {
             return _groupRepository.GetDetails(groupId);
         }
 
-        public async Task<GroupViewModel> GetGroupBy(long userId)
+        public async Task<PublicGroupViewModel> GetGroupBy(long userId)
         {
             return await _groupRepository.GetGroupBy(userId);   
         }
 
-        public Task<List<GroupViewModel>>GetGroupsBy(long userId)
+        public Task<GroupViewModel>GetGroupsBy(long userId)
         {
             return _groupRepository.GetGroupsBy(userId);
+        }
+
+        public async Task<PrivateGroupViewModel> IsExistPrivateGroupWith(long userId, long reciverId)
+        {
+            return await _groupRepository.IsExistPrivateGroupWith(userId, reciverId);   
         }
 
         public async Task<bool> IsUserInGroup(long userId, Guid token)
@@ -76,9 +89,20 @@ namespace ChatRoomManagement.Application
             await _groupRepository.JoinGroup(userId, groupToken);
         }
 
+        public async Task JoinPrivateGroup(JoinPrivateGroup command)
+        {
+            if(command == null) throw new ArgumentNullException();
+           await _groupRepository.JoinPrivateGroup(command); 
+        }
+
         public async Task<List<SearchResultViewModel>> Search(string title, long uesrId)
         {
             return await _groupRepository.Search(title, uesrId);
+        }
+
+        public async Task<List<string>> usersIdInGroup(long groupId)
+        {
+           return await _groupRepository.usersIdInGroup(groupId);
         }
     }
 }

@@ -12,7 +12,7 @@ namespace ChatRoomManagement.Domain.GroupAgg
         public long OwnerId { get;private set; }
         public Guid Token { get; private set; }
         public bool IsPrivate { get;private set; }
-
+        public long ReciverId { get; private set; }
 
         public List<Chat> Chats{ get; private set; }
         public List<User> Users { get;private set; }
@@ -20,13 +20,14 @@ namespace ChatRoomManagement.Domain.GroupAgg
 
 		protected Group(){}
 
-		public Group(string groupTitle, string picture,long ownerId,Guid token,User user)
+		public Group(string groupTitle, string picture,long ownerId,Guid token,bool isPrivate,long reciverId,User user)
 		{
 			GroupTitle = groupTitle;
 			Picture = picture;
 			OwnerId=ownerId;
-			IsPrivate=false;
+			IsPrivate=isPrivate;
 			Token=token;
+			ReciverId=reciverId;
 			Users=new List<User>(){user};
 		}
 

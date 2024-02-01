@@ -19,14 +19,14 @@ namespace ChatRoomManagement.Infrastructure.EfCore.Repository
 
         public async Task<ChatViewModel> CreateChat(CreateChat command)
         {
-            if (command == null)
-                return new ChatViewModel();
+           
+            var chat = new Chat(command.Body, command.UserId, command.GroupId, command.FilePath);
 
-            var chat = new Chat(command.Body, command.UserId, command.GroupId);
             await _context.Chats.AddAsync(chat);
             await _context.SaveChangesAsync();
 
-            var user=_context.Users.FirstOrDefault(p=>p.Id==command.UserId);
+            var user = _context.Users.FirstOrDefault(p => p.Id == command.UserId);
+            var groupName = _context.Groups.FirstOrDefault(p => p.Id == command.GroupId).GroupTitle;
 
             var chatViewModel = new ChatViewModel()
             {
@@ -37,7 +37,9 @@ namespace ChatRoomManagement.Infrastructure.EfCore.Repository
                 CreationDate = chat.CreationDate.ToShortDateString() + "  " + chat.CreationDate.ToShortTimeString(),
                 UserNameSender = user.Name,
                 AvatarSender = user.Picture,
-
+                GroupName = groupName,
+                FileAttach=chat.File
+                
 
             };
 
@@ -50,7 +52,7 @@ namespace ChatRoomManagement.Infrastructure.EfCore.Repository
 
             var chatsViewModel = new List<ChatViewModel>();
 
-            var chats = _context.Chats.Where(p => p.GroupId == groupId).Include(p=>p.User).OrderBy(p => p.CreationDate).ToList();
+            var chats = _context.Chats.Where(p => p.GroupId == groupId).Include(p => p.User).OrderBy(p => p.CreationDate).ToList();
 
             foreach (var item in chats)
             {
@@ -62,7 +64,8 @@ namespace ChatRoomManagement.Infrastructure.EfCore.Repository
                     GroupId = item.GroupId,
                     UserId = item.UserId,
                     CreationDate = item.CreationDate.ToShortDateString() + "  " + item.CreationDate.ToShortTimeString(),
-                    UserNameSender =item.User.Name
+                    UserNameSender = item.User.Name,
+                    FileAttach = item.File  
                 };
 
                 chatsViewModel.Add(chat);

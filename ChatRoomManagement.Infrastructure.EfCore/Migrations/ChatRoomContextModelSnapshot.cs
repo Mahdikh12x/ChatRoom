@@ -37,6 +37,10 @@ namespace ChatRoomManagement.Infrastructure.EfCore.Migrations
                     b.Property<DateTime>("CreationDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("File")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<long>("GroupId")
                         .HasColumnType("bigint");
 
@@ -78,6 +82,9 @@ namespace ChatRoomManagement.Infrastructure.EfCore.Migrations
                         .IsRequired()
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
+
+                    b.Property<long>("ReciverId")
+                        .HasColumnType("bigint");
 
                     b.Property<Guid>("Token")
                         .HasColumnType("uniqueidentifier");

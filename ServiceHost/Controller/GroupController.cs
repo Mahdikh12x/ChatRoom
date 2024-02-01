@@ -69,7 +69,7 @@ namespace ServiceHost.Controller
         [HttpPost]
         [Route("SendMessage")]
 
-        public async Task SendMessage([FromForm] string body,[FromForm] long currentGroupId)
+        public async Task SendMessage([FromForm] string body, [FromForm] long currentGroupId, [FromForm] IFormFile? file)
         {
             if (!string.IsNullOrWhiteSpace(body))
             {
@@ -78,13 +78,19 @@ namespace ServiceHost.Controller
                 {
                     GroupId = currentGroupId,
                     Body = body,
-                    UserId = userId
-
+                    UserId = userId,
+                    File = file
                 };
 
-               var result= await _chatApplication.CreateChat(command);
-               await _chathub.Clients.Group(result.GroupId.ToString()).SendAsync("RecieveMessage",result);
+                var result = await _chatApplication.CreateChat(command);
+
+                var usersIdInGroup = await _groupApplication.usersIdInGroup(result.GroupId);
+                await _chathub.Clients.Users(usersIdInGroup).SendAsync("ReciveNotification", result);
+                await _chathub.Clients.Group(result.GroupId.ToString()).SendAsync("RecieveMessage", result);
             }
+
+
+
 
         }
     }
