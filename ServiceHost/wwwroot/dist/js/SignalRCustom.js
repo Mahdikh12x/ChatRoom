@@ -9,6 +9,7 @@ $(document).ready(function () {
 
 var currentGroupId = 0;
 var userId = 0;
+var textMessage = "";
 
 
 
@@ -20,11 +21,48 @@ connection.on("NewGroup", appendGroup);
 connection.on("ReciveNotification", reciveNotif)
 connection.on("RecieveMessage", reciveMessage)
 connection.on("JoinGroup", joined);
+connection.on("TypingNotif", isTypingNotif)
 
 
+function isTypingNotif(user, isTypingMood, isGroupPrivate) {
+
+    if ($(`#typing${user.id}`).length) {
+
+
+        if (!isTypingMood) {
+            $(`#typing${user.id}`).remove();
+
+        }
+
+    }
+    else {
+
+        if (isGroupPrivate) {
+            $("#chatbody").append(`<div id="typing${user.id}" class="message">
+												<img class="avatar-md" src="/UploderFiles/${user.picture}" data-toggle="tooltip" data-placement="top" title="" >
+												<div class="text-main">
+													<div class="text-group">
+														<div class="text typing">
+															<div class="wave">
+																<span class="dot"></span>
+																<span class="dot"></span>
+																<span class="dot"></span>
+															</div>
+														</div>
+													</div>
+												</div>
+											</div>`)
+        }
+
+    }
+
+
+
+};
 function reciveMessage(result) {
 
-    debugger;
+    $(`#typing${result.userId}`).remove();
+
     if (userId == result.userId) {
 
         if (result.fileAttach != "No File") {
@@ -122,15 +160,15 @@ function joined(group, chats) {
     $("#chat").css("display", "block");
     if (group.reciverId > 0) {
         if (group.ownerId == userId) {
-            $(".inside img").attr("src", `/UploderFiles/${group.reciverPicture}`)
+            $("#imagegroup").attr("src", `/UploderFiles/${group.reciverPicture}`)
             $("#chatname").html(group.reciverUserName)
         } else {
-            $(".inside img").attr("src", `/UploderFiles/${group.ownerPicture}`)
+            $("#imagegroup").attr("src", `/UploderFiles/${group.ownerPicture}`)
             $("#chatname").html(group.ownerUserName)
         }
 
     } else {
-        $(".inside img").attr("src", `/UploderFiles/${group.picture}`)
+        $("#imagegroup").attr("src", `/UploderFiles/${group.picture}`)
         $("#chatname").html(group.groupTitle)
     }
 
@@ -238,7 +276,7 @@ function appendGroup(groupTitle, picture, id, isPrivate) {
 
                                 <div class="data">
                                     <h5>${groupTitle}</h5>
-                                    <span>Mon</span>
+                                    <span>user</span>
                                     <p>A new feature has been updated to your account. Check it out...</p>
                                 </div>
                             </a>`)
@@ -251,8 +289,7 @@ function appendGroup(groupTitle, picture, id, isPrivate) {
 
                                 <div class="data">
                                     <h5>${groupTitle}</h5>
-                                    <span>Mon</span>
-                                    <p>A new feature has been updated to your account. Check it out...</p>
+                                    <span>group</span>
                                 </div>
                             </a>`)
         }
@@ -271,6 +308,16 @@ function JoinInPrivateGroup(reciverId) {
     connection.invoke("JoinPrivateGroup", reciverId, currentGroupId);
 
 }
+function istyping(event) {
+
+    var isTypingMood = false;
+    var value = $("#textmessage").val();
+    if (value != "") {
+        isTypingMood = true;
+    }
+
+    connection.invoke("IsTyping", currentGroupId, isTypingMood);
+}
 
 connection.start();
 
@@ -279,7 +326,8 @@ function sendmessage(event) {
     event.preventDefault();
 
     var textmessage = event.target[0].value;
-    var fileattach = event.target[3].files[0]
+    var fileattach = event.target[3].files[0];
+
     if (textmessage == "" && fileattach != null) {
         textmessage = "send File";
     }
@@ -299,10 +347,17 @@ function sendmessage(event) {
         encytype: "multipart/form-data",
         processData: false,
         contentType: false
+    }).done(function () {
+
+        $("#fileattach").val('');
+        $("#textmessage").val('');
     });
 
-    $("#fileattach").val('');
-    $("#textmessage").val('');
+
+
+
+
+
 
 
 }
@@ -375,6 +430,5 @@ function search() {
         $("#searchbar").hide();
     }
 }
-
 
 

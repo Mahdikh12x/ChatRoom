@@ -79,6 +79,11 @@ namespace ChatRoomManagement.Application
             return await _groupRepository.IsExistPrivateGroupWith(userId, reciverId);   
         }
 
+        public async Task<bool> IsGroupPrivate(long groupId)
+        {
+            return await _groupRepository.IsGroupPrivate(groupId);
+        }
+
         public async Task<bool> IsUserInGroup(long userId, Guid token)
         {
             return await _groupRepository.IsUserInGroup(userId, token);

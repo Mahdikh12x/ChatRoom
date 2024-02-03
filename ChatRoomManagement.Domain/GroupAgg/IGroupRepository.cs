@@ -16,6 +16,8 @@ namespace ChatRoomManagement.Domain.GroupAgg
         Task<bool> IsUserInGroup(long userId, Guid token);
         Task JoinGroup(long userId, Guid groupToken);
         Task<List<string>> usersIdInGroup(long groupId);
+        Task<bool> IsGroupPrivate(long groupId);
+
 
 
     }

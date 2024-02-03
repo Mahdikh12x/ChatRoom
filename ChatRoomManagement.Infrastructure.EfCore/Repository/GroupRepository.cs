@@ -71,32 +71,7 @@ namespace ChatRoomManagement.Infrastructure.EfCore.Repository
             return await query;
         }
 
-        //public async Task<List<GroupViewModel>> GetGroupsBy(long userId)
-        //{
 
-        //    var query = _context.Users.Include(p => p.Groups)
-        //    .FirstOrDefault(p => p.Id == userId);
-
-        //    var result = new List<GroupViewModel>();
-        //    foreach (var item in query.Groups)
-        //    {
-
-        //        result.Add(new GroupViewModel
-        //        {
-        //            Id = item.Id,
-        //            GroupTitle = item.GroupTitle,
-        //            Picture = item.Picture,
-        //            Token = item.Token.ToString(),
-        //            CreationDate = item.CreationDate,
-        //        });
-
-
-        //    }
-        //    return result;
-
-
-
-        //}
         public async Task<List<PublicGroupViewModel>> GetGroups()
         {
             var query = _context.Groups.Select(p => new PublicGroupViewModel
@@ -160,7 +135,7 @@ namespace ChatRoomManagement.Infrastructure.EfCore.Repository
 
         public async Task<PrivateGroupViewModel> IsExistPrivateGroupWith(long userId, long reciverId)
         {
-            var result = _context.Groups.FirstOrDefault(p=>(p.OwnerId==userId && p.ReciverId==reciverId)||(p.OwnerId==reciverId && p.ReciverId==userId));
+            var result = _context.Groups.FirstOrDefault(p => (p.OwnerId == userId && p.ReciverId == reciverId) || (p.OwnerId == reciverId && p.ReciverId == userId));
 
             if (result is null)
                 return new PrivateGroupViewModel();
@@ -177,6 +152,12 @@ namespace ChatRoomManagement.Infrastructure.EfCore.Repository
                 ReciverPicture = reciver.Picture,
                 ReciverUserName = reciver.UserName
             };
+        }
+
+        public async Task<bool> IsGroupPrivate(long groupId)
+        {
+            var group = _context.Groups.FirstOrDefault(p => p.Id == groupId).IsPrivate;
+            return group;
         }
 
         public async Task<bool> IsUserInGroup(long userId, Guid token)

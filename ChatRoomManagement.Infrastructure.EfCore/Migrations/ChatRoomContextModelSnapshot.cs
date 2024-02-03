@@ -116,6 +116,9 @@ namespace ChatRoomManagement.Infrastructure.EfCore.Migrations
                     b.Property<bool>("IsOnline")
                         .HasColumnType("bit");
 
+                    b.Property<DateTime>("LastSeen")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(50)
