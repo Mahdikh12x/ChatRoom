@@ -277,7 +277,6 @@ function appendGroup(groupTitle, picture, id, isPrivate) {
                                 <div class="data">
                                     <h5>${groupTitle}</h5>
                                     <span>user</span>
-                                    <p>A new feature has been updated to your account. Check it out...</p>
                                 </div>
                             </a>`)
 
