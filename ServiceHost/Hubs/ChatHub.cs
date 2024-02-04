@@ -3,6 +3,7 @@ using ChatRoomManagement.Application;
 using ChatRoomManagement.Application.Contracts.Chat;
 using ChatRoomManagement.Application.Contracts.Group;
 using ChatRoomManagement.Application.Contracts.User;
+using ChatRoomManagement.Domain.UserAgg;
 using Microsoft.AspNetCore.SignalR;
 
 namespace ServiceHost.Hubs
@@ -13,7 +14,6 @@ namespace ServiceHost.Hubs
         private readonly IChatApplication _chatApplication;
         private readonly IUserApplication _userApplication;
         private readonly IAuthHelper _authHelper;
-
         public ChatHub(IGroupApplication groupApplication, IAuthHelper authHelper, IChatApplication chatApplication, IUserApplication userApplication)
         {
             _groupApplication = groupApplication;
@@ -24,18 +24,24 @@ namespace ServiceHost.Hubs
 
         public override Task OnConnectedAsync()
         {
-            var Id = _authHelper.GetUserId(Context.User);
-            Clients.Caller.SendAsync("SetUserId", Id);
-            _userApplication.changeLastSeenStatus(long.Parse(Id), true);
+            var userId = long.Parse(_authHelper.GetUserId(Context.User));
+            Clients.Caller.SendAsync("SetUserId", userId);
+            _userApplication.changeLastSeenStatus(userId, true);
+
+
+            Clients.Others.SendAsync("ChangeStatus", userId, true);
 
             return base.OnConnectedAsync();
         }
 
         public override Task OnDisconnectedAsync(Exception? exception)
         {
-            var Id = _authHelper.GetUserId(Context.User);
-            _userApplication.changeLastSeenStatus(long.Parse(Id), false);
-            _userApplication.EnterLastSeenDate(long.Parse(Id));
+            var userId = long.Parse(_authHelper.GetUserId(Context.User));
+            _userApplication.changeLastSeenStatus(userId, false);
+            _userApplication.EnterLastSeenDate(userId);
+
+            string lastSeenDate=$"{DateTime.Now.ToShortDateString()} {DateTime.Now.ToShortTimeString()}";
+            Clients.Others.SendAsync("ChangeStatus", userId, false,lastSeenDate);
             return base.OnDisconnectedAsync(exception);
         }
         public async Task JoinPublicGroup(string groupId, int currentGroupId)

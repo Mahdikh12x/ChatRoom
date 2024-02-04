@@ -1,6 +1,7 @@
 ﻿
 using _01_framework.Infrastructure;
 using ChatRoomManagement.Application.Contracts.Group;
+using ChatRoomManagement.Domain.ChatAgg;
 using ChatRoomManagement.Domain.GroupAgg;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
@@ -123,6 +124,8 @@ namespace ChatRoomManagement.Infrastructure.EfCore.Repository
                     OwnerId = owner.Id,
                     OwnerPicture = owner.Picture,
                     OwnerUserName = owner.UserName,
+                    OwnerIsOnline=owner.IsOnline,
+                    ReciverIsOnline=reciver.IsOnline,
                     ReciverId = reciver.Id,
                     ReciverPicture = reciver.Picture,
                     ReciverUserName = reciver.UserName
@@ -148,9 +151,13 @@ namespace ChatRoomManagement.Infrastructure.EfCore.Repository
                 OwnerId = owner.Id,
                 OwnerPicture = owner.Picture,
                 OwnerUserName = owner.UserName,
+                OwnerIsOnline = owner.IsOnline,
+                ReciverIsOnline= reciver.IsOnline,
                 ReciverId = reciver.Id,
                 ReciverPicture = reciver.Picture,
-                ReciverUserName = reciver.UserName
+                ReciverUserName = reciver.UserName,
+                OwnerLastSeenDate=owner.LastSeen.ToShortDateString() + "  " + owner.LastSeen.ToShortTimeString(),
+                ReciverLastSeenDate=reciver.LastSeen.ToShortDateString() + "  " + reciver.LastSeen.ToShortTimeString(),
             };
         }
 

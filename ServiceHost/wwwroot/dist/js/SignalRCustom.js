@@ -22,8 +22,28 @@ connection.on("ReciveNotification", reciveNotif)
 connection.on("RecieveMessage", reciveMessage)
 connection.on("JoinGroup", joined);
 connection.on("TypingNotif", isTypingNotif)
+connection.on("ChangeStatus", changeStatus)
+
+function changeStatus(userId, status, lastSeenDate) {
+
+    if (status) {
+        $(`#statususer-${userId}`).addClass("online");
+        $(`#statususer-${userId}`).removeClass("offline");
+
+        $(`#statususerinchat-${userId}`).addClass("online");
+        $(`#statususerinchat-${userId}`).removeClass("offline");
+        $(`#lastseendate-${userId}`).text("Active Now");
 
 
+    } else {
+        $(`#statususer-${userId}`).addClass("offline");
+        $(`#statususer-${userId}`).removeClass("online");
+
+        $(`#statususerinchat-${userId}`).addClass("offline");
+        $(`#statususerinchat-${userId}`).removeClass("online");
+        $(`#lastseendate-${userId}`).text(lastSeenDate);
+    }
+}
 function isTypingNotif(user, isTypingMood, isGroupPrivate) {
 
     if ($(`#typing${user.id}`).length) {
@@ -158,16 +178,63 @@ function joined(group, chats) {
 
     $("#startchat").css("display", "none");
     $("#chat").css("display", "block");
+
+
+
     if (group.reciverId > 0) {
         if (group.ownerId == userId) {
             $("#imagegroup").attr("src", `/UploderFiles/${group.reciverPicture}`)
-            $("#chatname").html(group.reciverUserName)
+            $("#chatname").html(group.reciverUserName);
+
+            $(`#lastseendate-${group.reciverId}`).remove();
+
+            var status = "";
+            if (group.reciverIsOnline) {
+
+
+
+                status = "online";
+                $("#chatinfo").append(`<span id="lastseendate-${group.reciverId}">Active Now</span>`);
+            } else {
+                status = "offline";
+                $("#chatinfo").append(`<span id="lastseendate-${group.reciverId}">${group.reciverLastSeenDate}</span>`);
+
+            }
+            $("#checkstatususer").append(`
+                <div  class="status">
+                    <i id="statususerinchat-${group.reciverId}" class="material-icons ${status}">fiber_manual_record</i>
+               </div>
+            `)
         } else {
             $("#imagegroup").attr("src", `/UploderFiles/${group.ownerPicture}`)
-            $("#chatname").html(group.ownerUserName)
+            $("#chatname").html(group.ownerUserName);
+            $(`#lastseendate-${group.ownerId}`).remove();
+
+
+            var status = "";
+            if (group.ownerIsOnline) {
+                status = "online";
+                $("#chatinfo").append(`<span id="lastseendate-${group.ownerId}">Active Now</span>`);
+
+            } else {
+                status = "offline";
+                $("#chatinfo").append(`<span id="lastseendate-${group.ownerId}">${group.ownerLastSeenDate}</span>`);
+
+            }
+            $("#checkstatususer").append(`
+
+                <div  class="status">
+                    <i id="statususerinchat-${group.ownerId}" class="material-icons ${status}">fiber_manual_record</i>
+               </div>
+               
+            `)
         }
 
     } else {
+
+        $("#checkstatususer").html('');
+        $("#chatinfo").html('');
+
         $("#imagegroup").attr("src", `/UploderFiles/${group.picture}`)
         $("#chatname").html(group.groupTitle)
     }
@@ -269,6 +336,7 @@ function appendGroup(groupTitle, picture, id, isPrivate) {
         $("#chats").show();
         $("#searchbar").hide();
         $("#searchinput").val('');
+
         if (isPrivate) {
 
             $("#chats").append(` <a  class="filterDiscussions all unread single " id="list-chat-list" data-toggle="list"  onclick="JoinInPrivateGroup('${id}')" role="tab">
@@ -398,6 +466,7 @@ function search() {
 
 
             $("#searchbar").html("");
+
             for (var i in data) {
 
 
